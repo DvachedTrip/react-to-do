@@ -44,19 +44,17 @@ const useTasks = () => {
     [tasks],
   );
 
-  const addTask = useCallback(() => {
-    if (newTaskTitle.trim().length > 0) {
-      const newTask = {
-        id: crypto?.randomUUID() ?? Date.now().toString(),
-        title: newTaskTitle,
-        isDone: false,
-      };
-      setTasks((prevTasks) => [...prevTasks, newTask]);
-      setNewTaskTitle("");
-      setSearchQuery("");
-      newTaskInputRef.current.focus();
-    }
-  }, [newTaskTitle]);
+  const addTask = useCallback((title) => {
+    const newTask = {
+      id: crypto?.randomUUID() ?? Date.now().toString(),
+      title,
+      isDone: false,
+    };
+    setTasks((prevTasks) => [...prevTasks, newTask]);
+    setNewTaskTitle("");
+    setSearchQuery("");
+    newTaskInputRef.current.focus();
+  }, []);
 
   const filteredTasks = useMemo(() => {
     const clearSearchQuery = searchQuery.trim().toLowerCase();
@@ -74,7 +72,7 @@ const useTasks = () => {
     deleteTask,
     deleteAllTasks,
     toggleTaskComplete,
-    addTaskSubmit: addTask,
+    addTask,
     newTaskTitle,
     setNewTaskTitle,
     newTaskInputRef,
