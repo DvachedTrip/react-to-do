@@ -1,0 +1,6 @@
+{
+  tasks: [
+    { id: "task-1", title: "Buy some trash", isDone: false },
+    { id: "task-1", title: "221", isDone: false },
+  ],
+}

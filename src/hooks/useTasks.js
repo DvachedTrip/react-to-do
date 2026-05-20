@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import useTaskLocalStorage from "./useTasksLocalStorage";
 
 const useTasks = () => {
-  const { savedTasks, saveTasks } = useTaskLocalStorage();
-  const [tasks, setTasks] = useState(savedTasks ?? []);
+  const [tasks, setTasks] = useState([]);
 
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,11 +21,11 @@ const useTasks = () => {
   }, []);
 
   useEffect(() => {
-    saveTasks(tasks);
-  }, [tasks]);
-
-  useEffect(() => {
     newTaskInputRef.current.focus();
+
+    fetch(`http://localhost:3001/tasks`)
+      .then((res) => res.json())
+      .then((data) => setTasks(data));
   }, []);
 
   const toggleTaskComplete = useCallback(
@@ -46,14 +44,24 @@ const useTasks = () => {
 
   const addTask = useCallback((title) => {
     const newTask = {
-      id: crypto?.randomUUID() ?? Date.now().toString(),
       title,
       isDone: false,
     };
-    setTasks((prevTasks) => [...prevTasks, newTask]);
-    setNewTaskTitle("");
-    setSearchQuery("");
-    newTaskInputRef.current.focus();
+
+    fetch(`http://localhost:3001/tasks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newTask),
+    })
+      .then((res) => res.json())
+      .then((addedTask) => {
+        setTasks((prevTasks) => [...prevTasks, addedTask]);
+        setNewTaskTitle("");
+        setSearchQuery("");
+        newTaskInputRef.current.focus();
+      });
   }, []);
 
   const filteredTasks = useMemo(() => {
