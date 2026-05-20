@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import tasksAPI from "../api/tasksAPI";
 
 const useTasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -12,32 +13,38 @@ const useTasks = () => {
     const isConfirmed = confirm("Are you sure?");
 
     if (isConfirmed) {
-      setTasks([]);
+      tasksAPI.deleteAll(tasks).then(() => {
+        setTasks([]);
+      });
     }
-  }, []);
+  }, [tasks]);
 
   const deleteTask = useCallback((taskId) => {
-    setTasks(tasks.filter((el) => el.id !== taskId));
+    tasksAPI.delete(taskId).then((res) => {
+      if (res.ok) {
+        setTasks((prevTasks) => prevTasks.filter((el) => el.id !== taskId));
+      }
+    });
   }, []);
 
   useEffect(() => {
     newTaskInputRef.current.focus();
 
-    fetch(`http://localhost:3001/tasks`)
-      .then((res) => res.json())
-      .then((data) => setTasks(data));
+    tasksAPI.getAll().then((data) => setTasks(data));
   }, []);
 
   const toggleTaskComplete = useCallback(
     (taskId, isDone) => {
-      setTasks(
-        tasks.map((el) => {
-          if (el.id === taskId) {
-            return { ...el, isDone: isDone };
-          }
-          return el;
-        }),
-      );
+      tasksAPI.toggleComplete(taskId, isDone).then(() => {
+        setTasks((prevTasks) => {
+          return prevTasks.map((el) => {
+            if (el.id === taskId) {
+              return { ...el, isDone: isDone };
+            }
+            return el;
+          });
+        });
+      });
     },
     [tasks],
   );
@@ -48,20 +55,12 @@ const useTasks = () => {
       isDone: false,
     };
 
-    fetch(`http://localhost:3001/tasks`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newTask),
-    })
-      .then((res) => res.json())
-      .then((addedTask) => {
-        setTasks((prevTasks) => [...prevTasks, addedTask]);
-        setNewTaskTitle("");
-        setSearchQuery("");
-        newTaskInputRef.current.focus();
-      });
+    tasksAPI.add(newTask).then((addedTask) => {
+      setTasks((prevTasks) => [...prevTasks, addedTask]);
+      setNewTaskTitle("");
+      setSearchQuery("");
+      newTaskInputRef.current.focus();
+    });
   }, []);
 
   const filteredTasks = useMemo(() => {
