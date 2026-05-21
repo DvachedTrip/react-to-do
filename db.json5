@@ -1,1 +1,10 @@
-{tasks:[{title:'dwq',isDone:false,id:'60_vLoExpHQ'},{title:'w',isDone:false,id:'5M18Ng68_nw'},{title:'s',isDone:false,id:'VufRhNrSv5g'},{title:'s',isDone:false,id:'XfT7SGn1iqA'}],$schema:'./node_modules/json-server/schema.json'}
+{
+  tasks: [
+    { title: "dwq", isDone: false, id: "60_vLoExpHQ" },
+    { title: "w", isDone: false, id: "5M18Ng68_nw" },
+    { title: "s", isDone: false, id: "VufRhNrSv5g" },
+    { title: "s", isDone: false, id: "XfT7SGn1iqA" },
+    { title: "s22", isDone: false, id: "123" },
+  ],
+  $schema: "./node_modules/json-server/schema.json",
+}
