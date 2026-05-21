@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import taskAPI from "../api/tasksAPI";
 
-const TaskPages = () => {
-  const taskId = "123";
+const TaskPages = ({ params}) => {
+  const taskId = params.id;
   const [task, setTask] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -33,6 +33,7 @@ const TaskPages = () => {
   if (hasError) {
     return <div>Task not found</div>;
   }
+  
 
   return (
     <div>
